@@ -1,0 +1,66 @@
+#ocean-chatbot {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  height: 400px;
+  background: #ffffff;
+  border: 2px solid #0077b6;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 999999;
+}
+
+#chat-header {
+  background: #0077b6;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 10px 10px 0 0;
+}
+
+#chat-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background: #f0f8ff;
+}
+
+#chat-body .user {
+  text-align: right;
+  color: #03045e;
+  margin: 5px 0;
+}
+
+#chat-body .bot {
+  text-align: left;
+  color: #0077b6;
+  margin: 5px 0;
+}
+
+#chat-input-area {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+#chat-input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  outline: none;
+}
+
+#chat-send {
+  background: #00b4d8;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+#chat-send:hover {
+  background: #0096c7;
+}

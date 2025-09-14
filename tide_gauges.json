@@ -1,0 +1,182 @@
+[
+  {
+    "station": "Aerial Bay",
+    "lat": 13.283,
+    "lng": 93.033
+  },
+  {
+    "station": "Campbell Bay",
+    "lat": 7,
+    "lng": 93.933
+  },
+  {
+    "station": "Chennai",
+    "lat": 13.1,
+    "lng": 80.3
+  },
+  {
+    "station": "Cochin",
+    "lat": 9.967,
+    "lng": 76.267
+  },
+  {
+    "station": "Ennore",
+    "lat": 13.25,
+    "lng": 80.333
+  },
+  {
+    "station": "Garden Reach",
+    "lat": 22.55,
+    "lng": 88.3
+  },
+  {
+    "station": "JNPT",
+    "lat": 18.917,
+    "lng": 72.75
+  },
+  {
+    "station": "Kakinada",
+    "lat": 16.933,
+    "lng": 82.25
+  },
+  {
+    "station": "Kandla",
+    "lat": 23.017,
+    "lng": 70.217
+  },
+  {
+    "station": "Karwar",
+    "lat": 14.8,
+    "lng": 74.117
+  },
+  {
+    "station": "Kavaratti",
+    "lat": 10.567,
+    "lng": 72.633
+  },
+  {
+    "station": "Krishnapatnam",
+    "lat": 14.25,
+    "lng": 80.133
+  },
+  {
+    "station": "Minicoy",
+    "lat": 8.283,
+    "lng": 73.05
+  },
+  {
+    "station": "Nagapattinam",
+    "lat": 10.767,
+    "lng": 79.85
+  },
+  {
+    "station": "Nancowry",
+    "lat": 8.05,
+    "lng": 93.55
+  },
+  {
+    "station": "New Mangalore",
+    "lat": 12.917,
+    "lng": 74.8
+  },
+  {
+    "station": "Okha",
+    "lat": 22.467,
+    "lng": 69.083
+  },
+  {
+    "station": "Paradip",
+    "lat": 20.267,
+    "lng": 86.7
+  },
+  {
+    "station": "Port Blair",
+    "lat": 11.683,
+    "lng": 92.767
+  },
+  {
+    "station": "Tuticorin",
+    "lat": 8.75,
+    "lng": 78.2
+  },
+  {
+    "station": "Visakhapatnam",
+    "lat": 17.683,
+    "lng": 83.283
+  },
+  {
+    "station": "Adani Hazira",
+    "lat": 21.1,
+    "lng": 72.616
+  },
+  {
+    "station": "Beypore",
+    "lat": 11.171,
+    "lng": 75.808
+  },
+  {
+    "station": "Car Nicobar",
+    "lat": 9.234,
+    "lng": 92.776
+  },
+  {
+    "station": "Hutbay",
+    "lat": 10.591,
+    "lng": 92.562
+  },
+  {
+    "station": "Jaigarh",
+    "lat": 17.281,
+    "lng": 73.208
+  },
+  {
+    "station": "Machilipatnam",
+    "lat": 16.145,
+    "lng": 81.178
+  },
+  {
+    "station": "Marmagao",
+    "lat": 15.409,
+    "lng": 73.8
+  },
+  {
+    "station": "Rangatbay",
+    "lat": 12.488,
+    "lng": 92.956
+  },
+  {
+    "station": "Veraval",
+    "lat": 20.912,
+    "lng": 70.408
+  },
+  {
+    "station": "Puducherry",
+    "lat": 11.93,
+    "lng": 79.835
+  },
+  {
+    "station": "Kollam",
+    "lat": 8.864,
+    "lng": 76.603
+  },
+  {
+    "station": "Porbandar",
+    "lat": 21.621,
+    "lng": 69.522
+  },
+  {
+    "station": "Jakhau",
+    "lat": 23.243,
+    "lng": 68.606
+  },
+  {
+    "station": "Dhamra",
+    "lat": 20.7851,
+    "lng": 86.9556
+  },
+  {
+    "station": "Gopalpur",
+    "lat": 19.2889,
+    "lng": 84.9483
+  }
+]

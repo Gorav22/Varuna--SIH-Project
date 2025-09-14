@@ -1,0 +1,538 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insitu Data</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.control.min.css" />
+
+ 
+	<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
+  
+  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/netcdfjs@1.1.1/dist/netcdf.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+   
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const appleIcon = document.createElement('link');
+    appleIcon.rel = 'apple-touch-icon';
+    appleIcon.href = 'images/favicon/apple-touch-icon.png';
+    document.head.appendChild(appleIcon);
+
+    const favicon = document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.href = 'images/logo.png';
+    document.head.appendChild(favicon);
+  });
+</script>
+    
+	
+    <style>
+.leaflet-popup-pane {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.leaflet-popup {
+  position: relative !important;
+  transform: translate(20,20) !important;
+}
+.animated-arrow {
+  animation: spinArrow 8s linear infinite;
+  transform-origin: center center;
+}
+@keyframes spinArrow {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(180deg); } /* for arrows to move in 180 degrees*/
+  /*100% { transform: rotate(360deg); } for arrows to move in 360 degrees*/
+}
+
+
+
+
+    /* Outer wrapper of the popup */
+.leaflet-popup.arrow-leaflet-popup .leaflet-popup-content-wrapper {
+  width: 150px;
+  max-width: 150px;
+}
+
+/* Content inside */
+.arrow-popup-custom {
+  font-family: Arial;
+  font-size: 12px;
+}
+
+      .color-scale-bar {
+  background: white;
+  padding: 6px;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  font-family: Arial, sans-serif;
+}
+/* Only applied dynamically for HF Radar case */
+.hfradar-active .leaflet-bottom .leaflet-control {
+  margin-bottom: 30px;
+}
+.custom-feature-popup .leaflet-popup-content-wrapper {
+  width: 301px !important;       /* exact width */
+  max-width: 301px !important;
+  min-width: 301px !important;
+  box-sizing: border-box;
+}
+
+      .moored-buoy-popup .leaflet-popup-content-wrapper {
+    width: 820px !important;
+    padding: 0;
+    border-radius: 8px;
+}
+
+.moored-buoy-popup .leaflet-popup-content {
+    margin: 0;
+    width: 800px !important;
+}
+.waverider-buoy-popup .leaflet-popup-content-wrapper {
+    width: 820px !important;
+    padding: 0;
+    border-radius: 8px;
+}
+
+.waverider-buoy-popup .leaflet-popup-content {
+    margin: 0;
+    width: 800px !important;
+}
+.aws-buoy-popup .leaflet-popup-content-wrapper {
+    width: 820px !important;
+    padding: 0;
+    border-radius: 8px;
+}
+
+.aws-buoy-popup .leaflet-popup-content {
+    margin: 0;
+    width: 800px !important;
+}
+
+.drifting-buoy-popup .leaflet-popup-content-wrapper {
+    width: 820px !important;
+    padding: 0;
+    border-radius: 8px;
+}
+.drifting-buoy-popup .leaflet-popup-content {
+    margin: 0;
+    width: 800px !important;
+}
+      /*HF Radar popup*/
+  .custom-hfradar-popup {
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+  min-width: 150px;
+}
+
+.custom-hfradar-popup h4 {
+  font-size: 15px;
+}
+
+.custom-hfradar-popup table {
+
+  border-collapse: collapse;
+}
+
+.custom-hfradar-popup table tr td {
+  padding: 2px 0;
+}
+
+.custom-hfradar-popup table tr td:first-child {
+  padding-right: 5px;
+}
+
+   /* Your existing CSS styles */
+        /* Modal styles */
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 800px;
+  border-radius: 5px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.modal-body {
+  overflow-x: auto; /* Horizontal scroll if needed */
+  overflow-y: auto; /* Vertical scroll if needed */
+  max-height: calc(80vh - 120px); /* Accounts for header/tabs */
+  padding: 10px 0;
+}
+/* Tab styles */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  border-radius: 4px;
+}
+
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 10px 16px;
+  transition: 0.3s;
+}
+
+.tab button:hover {
+  background-color: #ddd;
+}
+
+.tab button.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.tabcontent {
+  display: none;
+  padding: 20px 0;
+  border-top: none;
+}
+
+/* Image container */
+.image-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.image-container img {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+        body {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .top-menu {
+            display: flex;
+            background-color: #015296;
+            padding: 10px;
+            gap: 20px;
+            align-items: center; /* Vertically center items */
+       
+        }
+      
+
+    .menu-item {
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        padding-left: 5px;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+    .menu-item2 {
+        font-size: 24px;
+        font-weight: bold;
+        flex-grow: 1; /* Allows centering */
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background 0.3s;
+        padding-right: 150px;
+    }
+
+    .menu-item:hover, .menu-item2:hover {
+        background-color: #555;
+    }
+
+   .main-content {
+            display: flex;
+            flex: 1;
+        }
+        #checkbox-panel {
+            width: 250px;
+            padding: 15px;
+            background-color: #f4f4f4;
+            display: none;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        #map {
+    flex-grow: 1;
+    height: auto;
+    transition: width 0.3s ease;
+    
+     }
+
+        #legend-container {
+    position: absolute;
+    bottom: 50px;
+    right: 10px;
+    background: white;
+    padding: 6px;
+    border-radius: 6px;
+    box-shadow: 0 0 6px rgba(0,0,0,0.3);
+    display: none;
+    z-index: 1000; /* Make sure it's on top of the map */
+  }
+
+  #legend-image {
+    max-width: 150px;
+  }
+        .checkbox-item {
+            margin-bottom: 12px;
+        }
+        #toggleButton {
+            margin-bottom: 50px;
+            margin-left: 100px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            background-color: #f4f4f4;
+            font-size: 14px;
+            color: #333;
+            z-index: 1000;
+        }
+        /* Custom tooltip styling */
+        .buoy-label {
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            margin-top: 10px;
+        }
+        .leaflet-tooltip::before {
+            display: none !important;
+        }
+        .leaflet-popup-content{
+          width: 450px !important;
+          text-align: justify !important;
+        }
+        /*.leaflet-popup-content-wrapper, .leaflet-popup-tip, .leaflet-popup-close-button {
+            display: none;
+        }*/
+        /* Legend styling */
+        .info.legend {
+            background: white;
+            margin-top: 200px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            height: 150px;
+           overflow-y: auto;
+           width:120px;
+        }
+        .info.legend2{
+            background: white;
+            margin-bottom: 400px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            height: 100px;
+           width:100px;
+
+        }
+        .info.legend img {
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+        }
+        #homeButton {
+            width:30px;
+            height:30px;
+            position: absolute;
+            top: 150px;
+            left: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .leaflet-touch .leaflet-control-layers-toggle{
+            width:30px !important;
+            height:30px !important;
+        }
+        .leaflet-marker-icon {
+    width: 14px !important;
+    height: 40px !important;
+    margin-left: -10px !important;
+    margin-top: -35px !important;
+}
+
+    </style>
+</head>
+<body>
+  <script type="module">
+  import map from './js2/wms.js';
+
+  document.addEventListener('DOMContentLoaded', function () {
+    // Show coordinates on mouse move
+    map.on('mousemove', function(e) {
+      document.getElementById('coordinates').innerHTML =
+        'Lat: ' + e.latlng.lat.toFixed(4) + ', Lng: ' + e.latlng.lng.toFixed(4);
+    });
+
+  });
+</script>
+    <div class="top-menu">
+        <img src="images/INCOIS_Logo.png" style="width:100px;margin-top: -2px;"  class="logo" alt="INCOIS Logo"/>
+        <span class="menu-item" onclick="openModal()">About</span>
+        <span class="menu-item" id="toggleLayers">Layers</span>
+        <span class="menu-item2" style="text-align: center;">Ocean Observation Network (OON)</span>
+    </div>
+    
+<!-- The Modal -->
+<div id="aboutModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      
+      <!-- Tab links -->
+      <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'InSitu')">In Situ</button>
+        <button class="tablinks" onclick="openTab(event, 'RemoteSensing')">Remote Sensing</button>
+      </div>
+      <div class="modal-body">
+      <!-- Tab content -->
+      <div id="InSitu" class="tabcontent" style="display:block">
+        <h3>In Situ</h3>
+        <div class="image-container">
+          <img src="images/insitu.PNG" alt="In Situ ">
+        
+        </div>
+       
+      </div>
+      
+      <div id="RemoteSensing" class="tabcontent">
+        <h3>Remote Sensing</h3>
+        <div class="image-container">
+          <img src="images/remotesensing.png" alt="Remote Sensing">
+          
+        </div>
+    </div>
+      </div>
+    </div>
+  </div>
+  <script src="js2/modal.js"></script>
+    <div class="main-content" >
+        <div id="checkbox-panel" style="max-height: 90%;overflow-y: auto;">
+            <div style="display: flex; align-items: center; margin-top: 10px;">
+                <button id="toggleLayersButton" style="margin-right: 10px;">+</button>
+                <h4 >InsituData</h4>
+                <button id="toggleButton"><i class="fa-solid fa-chevron-left"></i></button>
+            </div>
+            <br />
+            <div id="buoyCheckboxes">
+              <div class="checkbox-item"><input type="checkbox" id="ArgoCheckbox" ><label for="ArgoCheckbox">Argo</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="MooredBuoyCheckbox" checked><label for="MooredBuoyCheckbox">Moored Buoy</label></div>
+                <!--<div class="checkbox-item"><input type="checkbox" id="WaveRiderBuoyCheckbox" ><label for="WaveRiderBuoyCheckbox">WaveRider Buoy</label></div>-->
+                <div class="checkbox-item"><input type="checkbox" id="AWSBuoyCheckbox" ><label for="AWSBuoyCheckbox">AWS</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="DRIFTINGBuoyCheckbox" ><label for="DRIFTINGBuoyCheckbox">Drifting Buoy</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="HFRadarBuoyCheckbox" ><label for="HFRadarBuoyCheckbox">HF Radar</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="RamaBuoyCheckbox"><label for="RamaBuoyCheckbox">Rama Buoy</label></div>
+                <!--<div class="checkbox-item"><input type="checkbox" id="OmniBuoyCheckbox"><label for="OmniBuoyCheckbox">Omni Buoy</label></div>-->
+                <div class="checkbox-item"><input type="checkbox" id="BPRCheckbox" ><label for="BPRCheckbox">BPR</label></div>
+                <div class="checkbox-item"><input type="checkbox" id="TideGuageCheckbox" ><label for="TideGuageCheckbox">Tide Guages</label></div>
+                <!--<div class="checkbox-item"><input type="checkbox" id="XBTCheckbox" ><label for="XBTCheckbox">XBT</label></div>-->
+            </div>
+        <div style="display: flex; align-items: center;margin-left:10px">
+        <h4>
+        <a href="/site/datainfo/remotesensing.jsp" style="text-decoration: none; color: inherit;">
+            Remote Sensing
+        </a>
+      </h4>
+      </div>
+
+            <br /> 
+        </div>
+        <script type="module" src="js2/ramaBuoy.js"></script>
+        <!--<script type="module" src="js2/omniBuoy.js"></script>-->
+
+        <script>
+            var isMobile = window.innerWidth < 768;
+
+// Set initial zoom based on device type
+var initialZoom = isMobile ? 5 : 5.4;
+        </script>
+        <div id="map">
+          <button id="homeButton">&#x1F3E0;</button>
+        </div>
+        
+    </div>
+
+<script type="module" src="js2/tideguages.js"></script>
+<script type="module" src="js2/bpr.js"></script>
+   
+    <script type="module" src="js2/legend.js"></script>
+    
+    <script type="module" src="js2/wms.js"></script>
+    
+
+ 
+<!-- Legend Container -->
+<div id="legend-container">
+  <img id="legend-image" src="" alt="Legend" style="max-width: 100px;">
+</div>
+
+<!-- Coordinates Display -->
+<div id="coordinates" style="position: absolute; bottom:50px; right: 200px; background: rgba(255,255,255,0.9); padding: 5px 10px; font-size: 14px; border-radius: 5px; z-index: 1000;">
+  Lat: --, Lng: --
+</div>
+
+
+
+
+
+
+
+<script type="module" src="js2/legendHFRadar.js"></script>
+
+    <div class="footer">
+        <p>&copy; Indian National Centre for Ocean Information Services (INCOIS), Govt of India. All Rights Reserved.</p>
+    </div>
+</body>
+
+
+
+</html>

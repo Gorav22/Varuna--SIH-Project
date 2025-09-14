@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "Ocean Chat (INCOIS) - Gemini",
+  "version": "1.0",
+  "description": "Chatbot for ocean-related queries using Gemini API on INCOIS site.",
+  "permissions": ["storage", "scripting", "activeTab"],
+  "host_permissions": [
+    "https://incois.gov.in/*",
+    "https://generativelanguage.googleapis.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://incois.gov.in/OON/*"],
+      "js": ["content.js"],
+      "css": ["chat.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "options.html",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Ocean Chat"
+  }
+}
